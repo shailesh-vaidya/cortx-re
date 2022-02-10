@@ -36,6 +36,12 @@ pipeline {
         string(name: 'CEPH_URL', defaultValue: 'https://github.com/Seagate/cortx-rgw', description: 'Repository URL for ceph build')
         string(name: 'CEPH_BRANCH', defaultValue: 'main', description: 'Branch for ceph build')
 
+        choice(
+            name: 'BUILD_LATEST_CORTX_RGW',
+            choices: ['yes', 'no'],
+            description: 'Build cortx-rgw from latest code or use last-successful build.'
+        )
+
     }
     
     options {
@@ -207,6 +213,7 @@ pipeline {
         }
 
         stage('Build Ceph Package') {
+            when { expression { params.BUILD_LATEST_CORTX_RGW == 'yes' } }
             steps {
                 script { build_stage = env.STAGE_NAME }
                 sh label: 'Build', script: '''
