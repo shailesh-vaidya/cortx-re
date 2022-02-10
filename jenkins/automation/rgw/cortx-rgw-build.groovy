@@ -50,81 +50,53 @@ pipeline {
 
     stages {
     
-        stage('Checkout Ceph') {
+        stage('Checkout Component Codebase') {
             steps {
                 script { build_stage = env.STAGE_NAME }
                 dir ('ceph') {
-                checkout([$class: 'GitSCM', branches: [[name: "${CEPH_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "${CEPH_URL}"]]])
+                    checkout([$class: 'GitSCM', branches: [[name: "${CEPH_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "${CEPH_URL}"]]])
                 }
-            }
-        }
 
-        stage('Checkout Motr') {
-            steps {
                 dir ('motr') {
                     checkout([$class: 'GitSCM', branches: [[name: "$MOTR_BRANCH"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog'], [$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, reference: '', trackingSubmodules: false]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "$MOTR_URL"]]])
-                }    
-            }
-        }
+                }   
 
-        stage('Checkout py-utils') {
-            steps {
-                script { build_stage = env.STAGE_NAME }
                 dir ('cortx-py-utils') {
                     checkout([$class: 'GitSCM', branches: [[name: "${UTILS_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "$UTILS_URL"]]])
                 }
-            }
-        }
 
-        stage('Checkout Hare') {
-            steps {
-                script { build_stage = env.STAGE_NAME }
                 dir ('hare') {
                     checkout([$class: 'GitSCM', branches: [[name: "${HARE_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', noTags: true, reference: '', shallow: true], [$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, reference: '', shallow: true, trackingSubmodules: false]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', refspec: '+refs/heads/main:refs/remotes/origin/main', url: "$HARE_URL"]]])
                 }
-            }
-        }
 
-        stage('Checkout Provisioenr') {
-            steps {
-                script { build_stage = env.STAGE_NAME }
                 dir ('provisioner') {
                     checkout([$class: 'GitSCM', branches: [[name: "${PRVSNR_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "${PRVSNR_URL}"]]])
-                }    
-            }
-        }
+                }
 
-        stage('Checkout cortx-rgw-integration') {
-            steps {
-                script { build_stage = env.STAGE_NAME }
                 dir ('cortx-rgw-integration') {
                     checkout([$class: 'GitSCM', branches: [[name: "${CORTX_RGW_INTEGRATION_BRANCH}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "${CORTX_RGW_INTEGRATION_URL}"]]])
-                }    
-            }
-        }
+                } 
 
-        stage ('Clean up') {
-            steps {
-                script { build_stage = env.STAGE_NAME }
-                sh label: 'Clean up', script: '''
-                rm -rf /root/rpmbuild/RPMS/x86_64/*.rpm
-                rm -rf $release_dir/$component/rpmbuild/SOURCES/ceph*.tar.bz2
-                rm -rf  $release_dir/$component/rpmbuild/BUILD/ceph*
-                yum erase cortx-py-utils cortx-motr{,-devel} -y
-                '''
             }
         }
         
         stage ('Prepare') {
             steps {
                 script { build_stage = env.STAGE_NAME }
+
+                sh label: 'Clean up', script: '''
+                rm -rf /root/rpmbuild/RPMS/x86_64/*.rpm
+                rm -rf $release_dir/$component/rpmbuild/SOURCES/ceph*.tar.bz2
+                rm -rf  $release_dir/$component/rpmbuild/BUILD/ceph*
+                yum erase cortx-py-utils cortx-motr{,-devel} -y
+                '''
+
                 sh label: 'prepare', script: '''
                 yum install createrepo systemd-devel libuuid libuuid-devel libaio-devel openssl openssl-devel perl-File-Slurp gcc cmake3 cmake rpm-build rpmdevtools autoconf automake libtool gcc-c++ -y 
                 rpmdev-setuptree
                 '''
             }
         }
-
 
         stage ('Build CORTX RGW Integration Packages') {
             steps {
