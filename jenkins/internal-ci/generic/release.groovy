@@ -132,8 +132,10 @@ pipeline {
                 sh label: 'Generate Key', script: '''
                     set +x
                     pushd scripts/rpm-signing
-                    cat gpgoptions >>  ~/.rpmmacros
-                    sed -i 's/passphrase/'${passphrase}'/g' genkey-batch
+                    sed 's/--passphrase-fd 3 //g' gpgoptions >> ~/.rpmmacros 
+		            sed -i -e "s/Passphrase:.*/Passphrase: ${passphrase}/g" genkey-batch
+                    sed -i -e "s/Name-Real:.*/Name-Real: Seagate1/g" genkey-batch
+        		    sed -i -e "s/gpg_name Seagate/gpg_name Seagate1/g" ~/.rpmmacros
                     gpg --batch --gen-key genkey-batch
                     gpg --export -a 'Seagate'  > RPM-GPG-KEY-Seagate
                     rpm --import RPM-GPG-KEY-Seagate
@@ -147,9 +149,15 @@ pipeline {
                         pushd scripts/rpm-signing
                             chmod +x rpm-sign.sh
                             cp RPM-GPG-KEY-Seagate $integration_dir/$release_tag/$env/
+                            count="0"
                             for rpm in `ls -1 $integration_dir/$release_tag/$env/*.rpm`
                             do
-                            ./rpm-sign.sh ${passphrase} $rpm
+                                if [ $count == "0" ]; then
+                                    ./rpm-sign.sh ${passphrase} $rpm
+                                    count="1"
+                                else
+                                    rpm --addsign $rpm
+                                fi
                             done
                         popd
                     done    
@@ -303,7 +311,7 @@ pipeline {
                 env.release_build = "${env.release_tag}"
                 env.build_stage = "${build_stage}"
 
-                def toEmail = "shailesh.vaidya@seagate.com"
+                def toEmail = "abhijit.patil@seagate.com"
                 
                 emailext ( 
                         body: '''${SCRIPT, template="K8s-release-email.template"}''',
