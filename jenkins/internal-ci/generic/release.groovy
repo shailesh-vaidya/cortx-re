@@ -144,12 +144,12 @@ pipeline {
 
                 sh label: 'Sign RPM', script: '''
                     set +x
+                    count="0"
                     for env in "dev" "prod";
                     do
                         pushd scripts/rpm-signing
                             chmod +x rpm-sign.sh
                             cp RPM-GPG-KEY-Seagate $integration_dir/$release_tag/$env/
-                            count="0"
                             for rpm in `ls -1 $integration_dir/$release_tag/$env/*.rpm`
                             do
                                 if [ $count == "0" ]; then
