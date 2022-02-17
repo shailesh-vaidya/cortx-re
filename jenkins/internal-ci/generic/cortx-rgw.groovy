@@ -8,7 +8,7 @@ pipeline {
     }
 
     triggers {
-        pollSCM '*/10 * * * *'
+        pollSCM '*/5 * * * *'
     }
     
     environment {
@@ -32,8 +32,8 @@ pipeline {
         stage('Checkout cortx-rgw') {
             steps {
                 script { build_stage = env.STAGE_NAME }
-                dir ('cortx-rgw') {
-                    checkout([$class: 'GitSCM', branches: [[name: "*/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog'], [$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, reference: '', trackingSubmodules: false]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: 'https://github.com/Seagate/cortx-rgw']]])
+                dir ('rgw') {
+                    checkout([$class: 'GitSCM', branches: [[name: "*/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "https://github.com/Seagate/cortx-rgw"]]])
                 }
             }
         }
@@ -174,24 +174,25 @@ pipeline {
                     manager.buildUnstable()
                 }
 
-                def toEmail = "abhijit.patil@seagate.com"
-                def recipientProvidersClass = [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']]
-                if( manager.build.result.toString() == "FAILURE") {
-                    toEmail = "abhijit.patil@seagate.com"
+                if( currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause) ) {
+                    def toEmail = "abhijit.patil@seagate.com"
+                    def recipientProvidersClass = [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']]
+                    if( manager.build.result.toString() == "FAILURE") {
+                        toEmail = "abhijit.patil@seagate.com"
+                    }
+                    emailext (
+                        body: '''${SCRIPT, template="component-email-dev.template"}''',
+                        mimeType: 'text/html',
+                        subject: "[Jenkins Build ${currentBuild.currentResult}] : ${env.JOB_NAME}",
+                        attachLog: true,
+                        to: toEmail,
+                        recipientProviders: recipientProvidersClass
+                    )
+                } else {
+                   echo 'Skipping Notification....' 
                 }
-                emailext (
-                    body: '''${SCRIPT, template="component-email-dev.template"}''',
-                    mimeType: 'text/html',
-                    subject: "[Jenkins Build ${currentBuild.currentResult}] : ${env.JOB_NAME}",
-                    attachLog: true,
-                    to: toEmail,
-                    recipientProviders: recipientProvidersClass
-                )
             }
-        }  
-        cleanup {
-            cleanWs()
-        }  
+        }    
     }
 }
 
