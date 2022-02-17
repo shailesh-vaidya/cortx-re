@@ -134,8 +134,8 @@ pipeline {
                     pushd scripts/rpm-signing
                     sed 's/--passphrase-fd 3 //g' gpgoptions >> ~/.rpmmacros 
                     sed -i -e "s/Passphrase:.*/Passphrase: ${passphrase}/g" genkey-batch
-                    sed -i -e "s/Name-Real:.*/Name-Real: Seagate1/g" genkey-batch
-                    sed -i -e "s/gpg_name Seagate/gpg_name Seagate1/g" ~/.rpmmacros
+                    //sed -i -e "s/Name-Real:.*/Name-Real: Seagate1/g" genkey-batch
+                    //sed -i -e "s/gpg_name Seagate/gpg_name Seagate1/g" ~/.rpmmacros
                     gpg --batch --gen-key genkey-batch
                     gpg --export -a 'Seagate'  > RPM-GPG-KEY-Seagate
                     rpm --import RPM-GPG-KEY-Seagate
