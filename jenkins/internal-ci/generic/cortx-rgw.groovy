@@ -188,7 +188,10 @@ pipeline {
                     recipientProviders: recipientProvidersClass
                 )
             }
-        }    
+        }  
+        cleanup {
+            cleanWs()
+        }  
     }
 }
 
