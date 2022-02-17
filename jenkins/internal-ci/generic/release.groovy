@@ -132,6 +132,7 @@ pipeline {
                 sh label: 'Generate Key', script: '''
                     set +x
                     pushd scripts/rpm-signing
+                    sleep 12000
                     sed 's/--passphrase-fd 3 //g' gpgoptions >> ~/.rpmmacros 
                     sed -i -e "s/Passphrase:.*/Passphrase: ${passphrase}/g" genkey-batch
                     gpg --batch --gen-key genkey-batch
