@@ -134,8 +134,6 @@ pipeline {
                     pushd scripts/rpm-signing
                     sed 's/--passphrase-fd 3 //g' gpgoptions >> ~/.rpmmacros 
                     sed -i -e "s/Passphrase:.*/Passphrase: ${passphrase}/g" genkey-batch
-                    //sed -i -e "s/Name-Real:.*/Name-Real: Seagate1/g" genkey-batch
-                    //sed -i -e "s/gpg_name Seagate/gpg_name Seagate1/g" ~/.rpmmacros
                     gpg --batch --gen-key genkey-batch
                     gpg --export -a 'Seagate'  > RPM-GPG-KEY-Seagate
                     rpm --import RPM-GPG-KEY-Seagate
@@ -311,7 +309,7 @@ pipeline {
                 env.release_build = "${env.release_tag}"
                 env.build_stage = "${build_stage}"
 
-                def toEmail = "shailesh.vaidya@seagate.com"
+                def toEmail = "abhijit.patil@seagate.com"
                 
                 emailext ( 
                         body: '''${SCRIPT, template="K8s-release-email.template"}''',
