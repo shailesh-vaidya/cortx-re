@@ -174,23 +174,19 @@ pipeline {
                     manager.buildUnstable()
                 }
 
-                if( currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause) ) {
-                    def toEmail = "abhijit.patil@seagate.com"
-                    def recipientProvidersClass = [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']]
-                    if( manager.build.result.toString() == "FAILURE") {
-                        toEmail = "abhijit.patil@seagate.com"
-                    }
-                    emailext (
-                        body: '''${SCRIPT, template="component-email-dev.template"}''',
-                        mimeType: 'text/html',
-                        subject: "[Jenkins Build ${currentBuild.currentResult}] : ${env.JOB_NAME}",
-                        attachLog: true,
-                        to: toEmail,
-                        recipientProviders: recipientProvidersClass
-                    )
-                } else {
-                   echo 'Skipping Notification....' 
+                def toEmail = "abhijit.patil@seagate.com"
+                def recipientProvidersClass = [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']]
+                if( manager.build.result.toString() == "FAILURE") {
+                    toEmail = "abhijit.patil@seagate.com"
                 }
+                emailext (
+                    body: '''${SCRIPT, template="component-email-dev.template"}''',
+                    mimeType: 'text/html',
+                    subject: "[Jenkins Build ${currentBuild.currentResult}] : ${env.JOB_NAME}",
+                    attachLog: true,
+                    to: toEmail,
+                    recipientProviders: recipientProvidersClass
+                )
             }
         }    
     }
