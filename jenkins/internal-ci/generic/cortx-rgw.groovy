@@ -32,7 +32,7 @@ pipeline {
         stage('Checkout cortx-rgw') {
             steps {
                 script { build_stage = env.STAGE_NAME }
-                dir ('rgw') {
+                dir ('/var/jenkins/workspace/rgw') {
                     checkout([$class: 'GitSCM', branches: [[name: "*/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "https://github.com/Seagate/cortx-rgw"]]])
                 }
             }
