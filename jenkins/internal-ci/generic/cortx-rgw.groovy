@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script { build_stage = env.STAGE_NAME }
                 dir ('cortx-rgw') {
-                checkout([$class: 'GitSCM', branches: [[name: "${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "https://github.com/Seagate/cortx-rgw"]]])
+                    checkout([$class: 'GitSCM', branches: [[name: "*/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog'], [$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, reference: '', trackingSubmodules: false]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: 'https://github.com/Seagate/cortx-rgw']]])
                 }
             }
         }
@@ -42,7 +42,8 @@ pipeline {
             steps {
                 script { build_stage = env.STAGE_NAME }
 
-                sh label: 'Build', script: '''                    
+                sh label: 'Build', script: ''' 
+                exit 1                   
                 #sed -i -e \'s/Library/Production\\/Rocky_8_Content_View/g\' -e  \'/http.*EPEL/s/Rocky_8\\/EPEL/EPEL-8\\/EPEL-8/g\' /etc/yum.repos.d/R8.4.repo
 
                 pushd cortx-rgw
@@ -174,10 +175,10 @@ pipeline {
                 }
 
                 if( currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause) ) {
-                    def toEmail = "shailesh.vaidya@seagate.com"
+                    def toEmail = "abhijit.patil@seagate.com"
                     def recipientProvidersClass = [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']]
                     if( manager.build.result.toString() == "FAILURE") {
-                        toEmail = "shailesh.vaidya@seagate.com"
+                        toEmail = "abhijit.patil@seagate.com"
                     }
                     emailext (
                         body: '''${SCRIPT, template="component-email-dev.template"}''',
