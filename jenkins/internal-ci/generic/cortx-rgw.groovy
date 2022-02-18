@@ -8,7 +8,7 @@ pipeline {
     }
 
     triggers {
-        pollSCM '*/5 * * * *'
+        pollSCM '*/3 * * * *'
     }
     
     environment {
@@ -160,9 +160,10 @@ pipeline {
                 rm -f /etc/yum.repos.d/cortx-storage.colo.seagate.com* /etc/yum.repos.d/root_rpmbuild_RPMS_x86_64.repo
                 '''
 
-            script {        
-                echo 'Cleanup Workspace.'
-                deleteDir() /* clean up our workspace */
+            script {  
+                dir ('cortx-rgw') {
+                    deleteDir()
+                }
 
                 env.release_build = (env.release_build != null) ? env.release_build : "" 
                 env.release_build_location = (env.release_build_location != null) ? env.release_build_location : ""
