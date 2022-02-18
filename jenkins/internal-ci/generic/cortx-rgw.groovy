@@ -161,9 +161,6 @@ pipeline {
                 '''
 
             script {        
-                echo 'Cleanup Workspace.'
-                deleteDir() /* clean up our workspace */
-
                 env.release_build = (env.release_build != null) ? env.release_build : "" 
                 env.release_build_location = (env.release_build_location != null) ? env.release_build_location : ""
                 env.component = (env.component).toUpperCase()
