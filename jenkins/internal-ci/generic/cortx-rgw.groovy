@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script { build_stage = env.STAGE_NAME }
                 dir ('cortx-rgw') {
-                    checkout([$class: 'GitSCM', branches: [[name: "*/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "https://github.com/AbhijitPatil1992/cortx-rgw"]]])
+                    checkout([$class: 'GitSCM', branches: [[name: "*/${branch}"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'AuthorInChangelog']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'cortx-admin-github', url: "https://github.com/Seagate/cortx-rgw"]]])
                 }
             }
         }
@@ -161,9 +161,9 @@ pipeline {
                 '''
 
             script {        
-                dir ('cortx-rgw') {
-                    deleteDir() /* clean up our workspace */
-                }
+                echo 'Cleanup Workspace.'
+                deleteDir() /* clean up our workspace */
+
                 env.release_build = (env.release_build != null) ? env.release_build : "" 
                 env.release_build_location = (env.release_build_location != null) ? env.release_build_location : ""
                 env.component = (env.component).toUpperCase()
