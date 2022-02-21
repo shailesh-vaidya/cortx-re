@@ -49,7 +49,8 @@ RUN if [[ $OS_TYPE == "centos" ]]; then rm -rf /etc/yum.repos.d/CentOS-* ;elif [
 #Add Internal and CORTX uploads repository
 COPY ./docker/cortx-build/${ENVIRONMENT}/$OS_TYPE-$OS_RELEASE.repo /etc/yum.repos.d/
 
-RUN if [[ "$ENVIRONMENT" = "opensource-ci" ]] && [[ $OS_TYPE == "rockylinux" ]]; then dnf config-manager --set-enabled powertools ; rm -rf /etc/yum.repos.d/$OS_TYPE-$OS_RELEASE.repo ;fi
+#Rocky Linux opensource dependecy added
+RUN if [[ "$ENVIRONMENT" = "opensource-ci" ]] && [[ $OS_TYPE == "rockylinux" ]]; then dnf install dnf-plugin-config-manager -y ;dnf config-manager --set-enabled powertools ; rm -rf /etc/yum.repos.d/$OS_TYPE-$OS_RELEASE.repo ;fi
 
 # Install EPEL repo for opensource-ci
 RUN if [ "$ENVIRONMENT" = "opensource-ci" ] ; then yum install epel-release -y ; fi && yum clean all \
