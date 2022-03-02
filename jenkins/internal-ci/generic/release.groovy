@@ -132,7 +132,7 @@ pipeline {
                 sh label: 'Generate Key', script: '''
                     set +x
                     pushd scripts/rpm-signing
-                    sleep 12000
+                    for expiredKey in $(gpg2 --list-keys | grep -B1 "Seagate"|head -1|tr -d " "); do echo "$expiredKey" ; gpg --batch --yes --quiet --delete-secret-key $expiredKey >/dev/null 2>&1 ; if [ $? -eq 0 ]; then echo "Remove old gpg secret success" ; else echo "Remove old gpg secret failed" ; fi ; gpg2 --batch --quiet --yes --delete-keys $expiredKey >/dev/null 2>&1 ; if [ $? -eq 0 ]; then echo "Remove old gpg key success" ; else echo "Remove old gpg key failed" ; fi ; done
                     sed 's/--passphrase-fd 3 //g' gpgoptions >> ~/.rpmmacros 
                     sed -i -e "s/Passphrase:.*/Passphrase: ${passphrase}/g" genkey-batch
                     gpg --batch --gen-key genkey-batch
