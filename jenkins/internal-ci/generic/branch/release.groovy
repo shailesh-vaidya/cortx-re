@@ -125,7 +125,7 @@ pipeline {
         }
         
         stage ('Sign rpm') {
-            when { expression { false } }
+            when { expression { true } }
             steps {
                 script { build_stage = env.STAGE_NAME }
                                 
