@@ -160,6 +160,7 @@ pipeline {
                             done
                         popd
                     done    
+                    exit 1
                 '''
             }
         }
