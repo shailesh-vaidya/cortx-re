@@ -91,6 +91,7 @@ pipeline {
         }
 
         stage('RPM Validation') {
+            when { expression { false } }
             steps {
                 script { build_stage = env.STAGE_NAME }
                 sh label: 'Validate RPMS for Motr Dependency', script:'''
