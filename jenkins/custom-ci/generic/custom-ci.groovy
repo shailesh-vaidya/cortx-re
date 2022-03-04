@@ -1,4 +1,6 @@
 #!/usr/bin/env groovy
+properties([[$class: 'ThrottleJobProperty', categories: [], limitOneJobWithMatchingParams: true, maxConcurrentPerNode: 5, maxConcurrentTotal: 5, paramsToUseForLimit: '', throttleEnabled: true, throttleOption: 'project']])
+
 pipeline {
     agent {
         node {
@@ -172,7 +174,7 @@ pipeline {
                         script { build_stage = env.STAGE_NAME }
                         script {
                             try {
-                                def habuild = build job: '/GitHub-custom-ci-builds/generic/cortx-rgw-integration-build', wait: true,
+                                def rgwintegrationbuild = build job: '/GitHub-custom-ci-builds/generic/cortx-rgw-integration-build', wait: true,
                                           parameters: [
                                               string(name: 'CORTX_RGW_INTEGRATION_URL', value: "${CORTX_RGW_INTEGRATION_URL}"),
                                               string(name: 'CORTX_RGW_INTEGRATION_BRANCH', value: "${CORTX_RGW_INTEGRATION_BRANCH}"),
@@ -180,7 +182,7 @@ pipeline {
                                                 ]
                             } catch (err) {
                                 build_stage = env.STAGE_NAME
-                                error "Failed to Build HA"
+                                error "Failed to Build RGW Integration"
                             }
                         }
                     }

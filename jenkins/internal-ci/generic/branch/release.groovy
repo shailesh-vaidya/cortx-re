@@ -58,16 +58,16 @@ pipeline {
                     do
                         mkdir -p $integration_dir/$release_tag/$env
                         #Temporary change for RGW feature branch
-                        pushd /mnt/bigstorage/releases/cortx/components/github/rgw/rockylinux-8.4/dev
-                        RGW_BRANCH_COMPONENTS="provisioner hare cortx-utils csm-agent"
-                        MAIN_BRANCH_COMPONENTS="motr cortx-rgw cortx-rgw-integration cortx-ha"
-                        for component in $RGW_BRANCH_COMPONENTS
-                        do
-                            echo -e "Copying RPM's for $component"
-                            if ls $component/last_successful/*.rpm 1> /dev/null 2>&1; then
-                            cp $component/last_successful/*.rpm $integration_dir/$release_tag/$env
-                            fi
-                        done
+                        #pushd /mnt/bigstorage/releases/cortx/components/github/rgw/rockylinux-8.4/dev
+                        #RGW_BRANCH_COMPONENTS="provisioner hare cortx-utils csm-agent"
+                        MAIN_BRANCH_COMPONENTS="motr cortx-rgw cortx-rgw-integration cortx-ha provisioner hare cortx-utils csm-agent"
+                        #for component in $RGW_BRANCH_COMPONENTS
+                        #do
+                        #    echo -e "Copying RPM's for $component"
+                        #    if ls $component/last_successful/*.rpm 1> /dev/null 2>&1; then
+                        #    cp $component/last_successful/*.rpm $integration_dir/$release_tag/$env
+                        #    fi
+                        #done
 
                         pushd $components_dir/$env
                         for component in  $MAIN_BRANCH_COMPONENTS
@@ -314,8 +314,8 @@ pipeline {
                     ]
                     build job: "K8s-3N-deployment", propagate: false, wait: false,
                     parameters: [
-                        string(name: 'CORTX_RE_BRANCH', value: "${branch}"),
-                        string(name: 'CORTX_RE_REPO', value: "https://github.com/Seagate/cortx-re/"),
+                        string(name: 'CORTX_RE_BRANCH', value: "rocky-linux-custom-ci"),
+                        string(name: 'CORTX_RE_REPO', value: "https://github.com/shailesh-vaidya/cortx-re"),
                         string(name: 'CORTX_ALL_IMAGE', value: "${env.cortx_all_image}"),
                         string(name: 'CORTX_SERVER_IMAGE', value: "${env.cortx_rgw_image}")
                     ]
