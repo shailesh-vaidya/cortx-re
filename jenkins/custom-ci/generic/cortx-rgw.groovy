@@ -52,7 +52,7 @@ pipeline {
             steps {
                 script { build_stage = env.STAGE_NAME }
 
-                sh label: 'Build', script: '''
+                sh label: 'Build', returnStatus: true, script: '''
                 rm -f /etc/yum.repos.d/cortx-storage.colo.seagate.com* /etc/yum.repos.d/root_rpmbuild_RPMS_x86_64.repo
                 yum install bzip2 rpm-build -y
 
