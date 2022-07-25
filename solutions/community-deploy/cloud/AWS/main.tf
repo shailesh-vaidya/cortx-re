@@ -200,8 +200,11 @@ resource "aws_eip_association" "eip_assoc" {
   allocation_id = aws_eip.elastic_ip.id
 }
 
-output "cortx_deploy_ip_addr" {
-  value       = aws_eip_association.eip_assoc.*.public_ip
-  description = "Public IP to connect CORTX server"
-}
 */
+
+
+output "cortx_deploy_ip_addr" {
+  description = "Public IP to connect EC2 instaces"
+  value         = aws_instance.cortx_deploy.*.public_ip 
+  
+}
