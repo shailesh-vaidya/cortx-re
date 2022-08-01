@@ -203,8 +203,13 @@ resource "aws_eip_association" "eip_assoc" {
 */
 
 
-output "cortx_deploy_ip_addr" {
+output "cortx_deploy_public_ip_addr" {
   description = "Public IP to connect EC2 instaces"
   value         = aws_instance.cortx_deploy.*.public_ip 
-  
+}
+
+
+output "cortx_deploy_private_ip_addr" {
+  description = "Public IP to connect EC2 instaces"
+  value         = aws_instance.cortx_deploy.*.private_ip 
 }
