@@ -53,6 +53,9 @@ RUN if [[ "$ENVIRONMENT" = "opensource-ci" ]] && [[ $OS_TYPE == "rockylinux/rock
 RUN if [ "$ENVIRONMENT" = "opensource-ci" ] ; then yum install epel-release -y ; fi && yum clean all \
 && rm -rf /var/cache/yum
 
+# UnInstall unnecessary packages
+RUN yum erase -y mozjs60 libmnl
+
 RUN yum install yum-utils -y \
     && yum-config-manager --add-repo ${BUILD_URL}/cortx_iso/ \
     && yum-config-manager --add-repo ${BUILD_URL}/3rd_party \
