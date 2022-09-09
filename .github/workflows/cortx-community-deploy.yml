@@ -27,4 +27,4 @@ jobs:
       - name: Run a multi-line script
         run: |
           pwd
-          echo test, and deploy your project.
+          cd solutions/community-deploy/cloud/AWS && ./tool_setup.sh
