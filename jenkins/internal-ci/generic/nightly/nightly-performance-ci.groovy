@@ -122,6 +122,7 @@ pipeline {
                                 ]
                                 env.cortxcluster_build_url = cortxCluster.absoluteUrl
                                 env.cortxCluster_status = cortxCluster.currentResult
+                                copyArtifacts filter: 'artifacts/perf*', fingerprintArtifacts: true, flatten: true, optional: true, projectName: '/Cortx-Automation/RGW/setup-cortx-rgw-cluster', selector: lastCompleted(), target: ''
                         }
                     }
                 }               
@@ -159,11 +160,14 @@ pipeline {
 
         always {
             script {
+
+                env.cortx_build = sh( script: "grep 'ghcr.io/seagate/cortx-control' perf_sanity_stats.md | cut -d':' -f2", returnStdout: true)
+                echo "${env.cortx_build}"
                 // Jenkins Summary
                 clusterStatus = ""
                 if ( currentBuild.currentResult == "SUCCESS" ) {
                     clusterStatus = readFile(file: 'perf_sanity_stats.md')
-                    MESSAGE = "Build#${build_id} Nightly CORTX Performance CI Success"
+                    MESSAGE = "Build#${build_id} Nightly CORTX Performance CI Success for CORTX Build#${env.cortx_build}"
                     ICON = "accept.gif"
                     STATUS = "SUCCESS"
                 } else if ( currentBuild.currentResult == "FAILURE" ) {
@@ -171,7 +175,6 @@ pipeline {
                     MESSAGE = "Build#${build_id} Nightly CORTX Performance CI Failed"
                     ICON = "error.gif"
                     STATUS = "FAILURE"
-
                 } else {
                     manager.buildUnstable()
                     MESSAGE = "Build#${build_id} Nightly CORTX Performance CI Unstable"
@@ -197,7 +200,7 @@ pipeline {
                 emailext (
                     body: '''${SCRIPT, template="cluster-setup-email.template"}''',
                     mimeType: 'text/html',
-                    subject: "Build#${build_id} Nightly CORTX Performance CI ${currentBuild.currentResult}",
+                    subject: "${MESSAGE}",
                     attachLog: true,
                     to: "${mailRecipients}",
                     recipientProviders: recipientProvidersClass
