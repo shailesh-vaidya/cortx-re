@@ -265,7 +265,7 @@ function execute_deploy_script() {
 }
 
 function execute_prereq() {
-    add_secondary_separator "Pulling latest CORTX images"
+    add_secondary_separator "Pulling CORTX images"
     if [ "${COMMUNITY_USE}" == "no" ]; then
         CORTX_SERVER_IMAGE=$(pull_image "$CORTX_SERVER_IMAGE")
         CORTX_DATA_IMAGE=$(pull_image "$CORTX_DATA_IMAGE")
