@@ -353,7 +353,7 @@ function destroy() {
 
 function print_pod_status() {
     add_secondary_separator "Image Details"
-    kubectl get pods -o jsonpath="{.items[*].spec.containers[*].image}" | tr ' ' '\n' | uniq 
+    kubectl get pods -o jsonpath="{.items[*].spec.containers[*].image}" | tr ' ' '\n' | sort | uniq 
     add_secondary_separator "POD Status"
     if ! kubectl get pods | grep -v STATUS | awk '{ print $3}' |  grep -v -q -i running; then
         kubectl get pods -o wide
