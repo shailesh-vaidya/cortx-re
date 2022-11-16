@@ -4,7 +4,7 @@ properties([[$class: 'ThrottleJobProperty', categories: [], limitOneJobWithMatch
 pipeline {
     agent {
         node {
-            label "docker-${os_version}-node"
+            label "docker-${os_version}-vmware-node"
         }
     }
 
