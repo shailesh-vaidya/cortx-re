@@ -2,7 +2,7 @@
 pipeline {
     agent {
         node {
-            label "docker-${os_version}-vmware-nodee"
+            label "docker-${os_version}-vmware-node"
         }
     }
     
