@@ -23,7 +23,7 @@ source /var/tmp/functions.sh
 CALICO_PLUGIN_VERSION=v3.23.0
 K8_VERSION=1.22.6
 DOCKER_VERSION=20.10.8
-OS_VERSION=( "CentOS 7.9.2009" "Rocky 8.4" )
+OS_VERSION=( "CentOS 7.9.2009" "Rocky 8.4" "Rocky 8.6")
 export Exception=100
 export ConfigException=101
 
@@ -68,6 +68,7 @@ function verify_os() {
         echo "SUCCESS : $CURRENT_OS from allowed OS list"
     else
         echo "ERROR : Operating System is not correct. Current OS : $CURRENT_OS, Required OS should be one of : ${OS_VERSION[*]}"
+        exit 1
     fi
 }
 
