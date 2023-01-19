@@ -75,7 +75,7 @@ function passwordless_ssh() {
 
     if [[ "$ID" == "rocky" || "$ID" == "centos" ]]; then
         yum list pdsh -q || yum install epel-release -y
-        yum install sshpass openssh-clients pdsh -y
+        yum install sshpass openssh-clients pdsh pdsh-rcmd-ssh -y
         check_status "$NODE: Package installation failed"
     fi
     
